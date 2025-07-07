@@ -12,13 +12,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(
-  cors({
-    origin: "*", // permite cualquier origen
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: false, // no con cookies si origin es '*'
-  })
-);
+app.use(cors()); // Sin opciones, permite todo y agrega el header
+
 app.use(express.json());
 
 // Multer config para guardar en 'uploads/'
