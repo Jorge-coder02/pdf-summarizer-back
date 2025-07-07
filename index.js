@@ -81,13 +81,13 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   }
 });
 
-app.get("/result/:id", (req, res) => {
-  const result = summaries[req.params.id];
-  if (!result) {
-    return res.status(404).json({ error: "ID no encontrado" });
-  }
-  res.json(result);
-});
+// app.get("/result/:id", (req, res) => {
+//   const result = summaries[req.params.id];
+//   if (!result) {
+//     return res.status(404).json({ error: "ID no encontrado" });
+//   }
+//   res.json(result);
+// });
 
 // Función para extraer texto de un PDF
 async function extractTextFromPDF(filePath) {
