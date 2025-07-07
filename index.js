@@ -43,6 +43,11 @@ const upload = multer({ dest: "uploads/" });
 // }
 // testCohereKey();
 
+// GET para prueba msg
+app.get("/", async (_, res) => {
+  res.status(400).json({ respuesta: "Todo en orden" });
+});
+
 // POST /upload
 // Recibe un archivo PDF, lo lee y lo resume usando CohereAI
 app.post("/upload", upload.single("file"), async (req, res) => {
