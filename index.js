@@ -17,9 +17,8 @@ if (!PORT) {
 // Middleware
 app.use(
   cors({
-    // Usa la variable de entorno para producción, y localhost para desarrollo
     origin: process.env.FRONTEND_URL,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Añade OPTIONS, PUT, DELETE para flexibilidad, aunque solo uses GET/POST ahora.
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
@@ -27,32 +26,7 @@ app.use(
 app.use(express.json());
 
 // Multer config para guardar en 'uploads/'
-// const uploadDir = path.resolve("uploads");
-// fs.mkdir(uploadDir, { recursive: true });
 const upload = multer({ dest: "uploads/" });
-
-// async function testCohereKey() {
-//   try {
-//     const response = await axios.post(
-//       "https://api.cohere.ai/v1/summarize",
-//       {
-//         text: "Este es un texto de prueba para verificar la clave API.",
-//         length: "short",
-//         format: "paragraph",
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer TU_CLAVE_AQUI`,
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-//     console.log("Respuesta Cohere:", response.data);
-//   } catch (err) {
-//     console.error("Error test Cohere:", err.response?.data || err.message);
-//   }
-// }
-// testCohereKey();
 
 // GET para prueba msg
 app.get("/", (_, res) => {
@@ -86,14 +60,6 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     summaries[id] = { status: "error", error: err.message };
     console.error("❌ ERROR en /upload async:", err);
   }
-});
-
-app.get("/result/:id", (req, res) => {
-  const result = summaries[req.params.id];
-  if (!result) {
-    return res.status(404).json({ error: "ID no encontrado" });
-  }
-  res.json(result);
 });
 
 // Función para extraer texto de un PDF
