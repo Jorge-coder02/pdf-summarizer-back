@@ -9,13 +9,14 @@ import fs from "fs/promises";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 // Middleware
 app.use(
   cors({
-    origin: "*", // Permite todos los orígenes (solo para desarrollo)
-    methods: ["GET", "POST"],
+    // Usa la variable de entorno para producción, y localhost para desarrollo
+    origin: process.env.FRONTEND_URL || "http://localhost:5173", // <--- ¡CAMBIO CLAVE AQUÍ!
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Añade OPTIONS, PUT, DELETE para flexibilidad, aunque solo uses GET/POST ahora.
     credentials: true,
   })
 );
