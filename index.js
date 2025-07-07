@@ -75,10 +75,16 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
 // Función para extraer texto de un PDF
 async function extractTextFromPDF(filePath) {
-  const fileBuffer = await fs.readFile(filePath);
-  const pdfData = await pdfParse(fileBuffer);
-  const MAX_TOKENS = 8000;
-  return pdfData.text.slice(0, MAX_TOKENS);
+  try {
+    console.log("Leyendo PDF desde:", filePath);
+    const fileBuffer = await fs.readFile(filePath);
+    const pdfData = await pdfParse(fileBuffer);
+    const MAX_TOKENS = 8000;
+    return pdfData.text.slice(0, MAX_TOKENS);
+  } catch (error) {
+    console.error("Error en extractTextFromPDF:", error.stack);
+    throw error;
+  }
 }
 
 // Función para llamar a la API de Cohere con el contenido del PDF
