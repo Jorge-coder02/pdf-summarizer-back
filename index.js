@@ -52,8 +52,8 @@ const upload = multer({ dest: "uploads/" });
 // testCohereKey();
 
 // GET para prueba msg
-app.get("/", async (_, res) => {
-  res.status(400).json({ respuesta: "Todo en orden" });
+app.get("/", (_, res) => {
+  res.send("Todo en orden");
 });
 
 // POST /upload
