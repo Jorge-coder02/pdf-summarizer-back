@@ -10,12 +10,15 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
+if (!PORT) {
+  throw new Error("🚨 process.env.PORT no está definido. Railway lo necesita.");
+}
 
 // Middleware
 app.use(
   cors({
     // Usa la variable de entorno para producción, y localhost para desarrollo
-    origin: process.env.FRONTEND_URL || "http://localhost:5173", // <--- ¡CAMBIO CLAVE AQUÍ!
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Añade OPTIONS, PUT, DELETE para flexibilidad, aunque solo uses GET/POST ahora.
     credentials: true,
   })
@@ -151,7 +154,7 @@ export async function translateToSpanish(text) {
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 
   //   console.log(
   //     "Clave OpenAI:",
