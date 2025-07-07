@@ -14,9 +14,9 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: "*", // permite cualquier origen
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true, // si usas cookies o auth con credenciales
+    credentials: false, // no con cookies si origin es '*'
   })
 );
 app.use(express.json());
