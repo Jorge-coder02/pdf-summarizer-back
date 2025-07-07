@@ -9,7 +9,7 @@ import fs from "fs/promises";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 if (!PORT) {
   throw new Error("🚨 process.env.PORT no está definido. Railway lo necesita.");
 }
