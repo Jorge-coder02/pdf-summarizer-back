@@ -112,4 +112,6 @@ export async function translateToSpanish(text) {
 // Iniciar servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en ${PORT}`);
+  console.log("COHERE KEY:", process.env.COHERE_API_KEY);
+  console.log("FRONTEND URL:", process.env.FRONTEND_URL);
 });
