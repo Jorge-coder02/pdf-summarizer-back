@@ -15,13 +15,7 @@ if (!PORT) {
 }
 
 // Middleware
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
-  })
-);
+app.use(cors());
 
 app.use(express.json());
 
