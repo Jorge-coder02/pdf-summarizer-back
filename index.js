@@ -2,9 +2,7 @@ import path from "path";
 import express from "express";
 import cors from "cors";
 import multer from "multer";
-import { getDocument, GlobalWorkerOptions } from "pdfjs-dist/es5/build/pdf.js";
-GlobalWorkerOptions.workerSrc =
-  "node_modules/pdfjs-dist/es5/build/pdf.worker.js";
+import pdfParse from "pdf-parse/lib/pdf-parse.js";
 import axios from "axios";
 import dotenv from "dotenv";
 import fs from "fs/promises";
@@ -79,20 +77,10 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 async function extractTextFromPDF(filePath) {
   try {
     console.log("Leyendo PDF desde:", filePath);
-    const data = await fs.readFile(filePath);
-    const pdf = await getDocument({ data }).promise;
-
-    let text = "";
-
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      const strings = content.items.map((item) => item.str);
-      text += strings.join(" ") + "\n";
-    }
-
+    const fileBuffer = await fs.readFile(filePath);
+    const pdfData = await pdfParse(fileBuffer);
     const MAX_TOKENS = 8000;
-    return text.slice(0, MAX_TOKENS);
+    return pdfData.text.slice(0, MAX_TOKENS);
   } catch (error) {
     console.error("Error en extractTextFromPDF:", error.stack);
     throw error;
