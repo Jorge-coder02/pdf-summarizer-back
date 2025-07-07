@@ -2,7 +2,9 @@ import path from "path";
 import express from "express";
 import cors from "cors";
 import multer from "multer";
-import { getDocument } from "pdfjs-dist/legacy/build/pdf.js";
+import { getDocument, GlobalWorkerOptions } from "pdfjs-dist/es5/build/pdf.js";
+GlobalWorkerOptions.workerSrc =
+  "node_modules/pdfjs-dist/es5/build/pdf.worker.js";
 import axios from "axios";
 import dotenv from "dotenv";
 import fs from "fs/promises";
