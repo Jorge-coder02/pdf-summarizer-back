@@ -10,9 +10,6 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-if (!PORT) {
-  throw new Error("🚨 process.env.PORT no está definido. Railway lo necesita.");
-}
 
 // Middleware
 app.use(cors());
@@ -20,74 +17,41 @@ app.use(cors());
 app.use(express.json());
 
 // Multer config para guardar en 'uploads/'
-// const uploadDir = path.resolve("uploads");
-// fs.mkdir(uploadDir, { recursive: true });
 const upload = multer({ dest: "uploads/" });
 
-// async function testCohereKey() {
-//   try {
-//     const response = await axios.post(
-//       "https://api.cohere.ai/v1/summarize",
-//       {
-//         text: "Este es un texto de prueba para verificar la clave API.",
-//         length: "short",
-//         format: "paragraph",
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer TU_CLAVE_AQUI`,
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-//     console.log("Respuesta Cohere:", response.data);
-//   } catch (err) {
-//     console.error("Error test Cohere:", err.response?.data || err.message);
-//   }
-// }
-// testCohereKey();
-
 // GET para prueba msg
-app.get("/", (_, res) => {
-  res.send("Todo en orden");
+app.get("/", async (_, res) => {
+  res.status(400).json({ respuesta: "Todo en orden" });
 });
 
 // POST /upload
 // Recibe un archivo PDF, lo lee y lo resume usando CohereAI
-
-const summaries = {}; // Memoria temporal
-
 app.post("/upload", upload.single("file"), async (req, res) => {
   try {
+    console.log("req.file:", req.file);
     if (!req.file) {
       return res.status(400).json({ error: "No se envió ningún archivo" });
     }
 
-    const filePath = req.file.path;
-    const id = Date.now().toString(); // ID único
-    summaries[id] = { status: "processing" };
+    const filePath = req.file.path; // Ruta del archivo temporal subido
 
-    res.json({ id }); // respuesta inmediata
-
-    // Procesamiento en background
+    // Extraer texto del PDF
     const inputText = await extractTextFromPDF(filePath);
+
+    // Eliminar el archivo temporal
     await fs.unlink(filePath);
 
+    // Llamada a Cohere
     const summary = await getSummaryFromCohere(inputText);
-    summaries[id] = { status: "done", summary };
+
+    return res.json({ summary });
   } catch (err) {
-    summaries[id] = { status: "error", error: err.message };
-    console.error("❌ ERROR en /upload async:", err);
+    console.error("❌ ERROR en /upload:", err);
+    res
+      .status(500)
+      .json({ error: "Error interno en servidor", details: err.message });
   }
 });
-
-// app.get("/result/:id", (req, res) => {
-//   const result = summaries[req.params.id];
-//   if (!result) {
-//     return res.status(404).json({ error: "ID no encontrado" });
-//   }
-//   res.json(result);
-// });
 
 // Función para extraer texto de un PDF
 async function extractTextFromPDF(filePath) {
@@ -147,10 +111,5 @@ export async function translateToSpanish(text) {
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
-
-  //   console.log(
-  //     "Clave OpenAI:",
-  //     process.env.OPENAI_API_KEY ? "OK" : "NO encontrada"
-  //   );
+  console.log(`🚀 Servidor corriendo en ${PORT}`);
 });
