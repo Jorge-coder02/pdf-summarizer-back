@@ -2,7 +2,7 @@ import path from "path";
 import express from "express";
 import cors from "cors";
 import multer from "multer";
-import { getDocument } from "pdfjs-dist";
+import { getDocument } from "pdfjs-dist/legacy/build/pdf.js";
 import axios from "axios";
 import dotenv from "dotenv";
 import fs from "fs/promises";
