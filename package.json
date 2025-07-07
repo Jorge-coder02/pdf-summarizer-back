@@ -18,7 +18,8 @@
     "express": "^5.1.0",
     "multer": "^2.0.1",
     "pdf-parse": "^1.1.1",
-    "pdfjs-dist": "^5.3.93"
+    "pdfjs-dist": "^5.3.93",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/pdf-parse": "^1.1.5",

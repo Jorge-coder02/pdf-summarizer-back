@@ -58,31 +58,39 @@ app.get("/", async (_, res) => {
 
 // POST /upload
 // Recibe un archivo PDF, lo lee y lo resume usando CohereAI
+
+const summaries = {}; // Memoria temporal
+
 app.post("/upload", upload.single("file"), async (req, res) => {
   try {
-    console.log("req.file:", req.file);
     if (!req.file) {
       return res.status(400).json({ error: "No se envió ningún archivo" });
     }
 
-    const filePath = req.file.path; // Ruta del archivo temporal subido
+    const filePath = req.file.path;
+    const id = Date.now().toString(); // ID único
+    summaries[id] = { status: "processing" };
 
-    // Extraer texto del PDF
+    res.json({ id }); // respuesta inmediata
+
+    // Procesamiento en background
     const inputText = await extractTextFromPDF(filePath);
-
-    // Eliminar el archivo temporal
     await fs.unlink(filePath);
 
-    // Llamada a Cohere
     const summary = await getSummaryFromCohere(inputText);
-
-    return res.json({ summary });
+    summaries[id] = { status: "done", summary };
   } catch (err) {
-    console.error("❌ ERROR en /upload:", err);
-    res
-      .status(500)
-      .json({ error: "Error interno en servidor", details: err.message });
+    summaries[id] = { status: "error", error: err.message };
+    console.error("❌ ERROR en /upload async:", err);
   }
+});
+
+app.get("/result/:id", (req, res) => {
+  const result = summaries[req.params.id];
+  if (!result) {
+    return res.status(404).json({ error: "ID no encontrado" });
+  }
+  res.json(result);
 });
 
 // Función para extraer texto de un PDF
